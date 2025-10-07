@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.preprocessing import LabelEncoder
 
+# Set visualization styles
 sns.set(style='whitegrid')
 st.set_option('deprecation.showPyplotGlobalUse', False)
 
@@ -91,6 +92,7 @@ if uploaded_file:
     st.header("📊 Visualizations")
 
     st.subheader("Rent Distribution")
+    plt.figure(figsize=(10, 6))
     plt.hist(df['rent_month'], bins=30, color='skyblue', edgecolor='black')
     plt.axvline(15000, color='green', linestyle='--', label='Affordable/Mid-range')
     plt.axvline(40000, color='red', linestyle='--', label='Mid-range/Luxury')
@@ -101,6 +103,7 @@ if uploaded_file:
     st.pyplot()
 
     st.subheader("Average Rent by Furnishing Type")
+    plt.figure(figsize=(10, 6))
     furnish_avg = df.groupby('furnishing')['rent_month'].mean().sort_values()
     sns.barplot(x=furnish_avg.index, y=furnish_avg.values, palette='viridis')
     plt.ylabel('Average Rent (₹)')
@@ -109,6 +112,7 @@ if uploaded_file:
     st.pyplot()
 
     st.subheader("Average Rent by City Tier")
+    plt.figure(figsize=(10, 6))
     tier_avg = df.groupby('city_tier')['rent_month'].mean().sort_values()
     sns.barplot(x=tier_avg.index, y=tier_avg.values, palette='magma')
     plt.ylabel('Average Rent (₹)')
@@ -117,6 +121,7 @@ if uploaded_file:
     st.pyplot()
 
     st.subheader("Correlation Heatmap")
+    plt.figure(figsize=(10, 8))
     corr_cols = ['rent_month', 'bhk', 'size_sqft', 'property_age_yrs']
     corr_matrix = df[corr_cols].corr()
     sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', fmt=".2f", linewidths=0.5)
