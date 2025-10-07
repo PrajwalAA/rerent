@@ -8,7 +8,6 @@ from sklearn.preprocessing import LabelEncoder
 
 # Set visualization styles
 sns.set(style='whitegrid')
-st.set_option('deprecation.showPyplotGlobalUse', False)
 
 # --- 1. App Title ---
 st.title("🏠 Rental Property Data Analysis - India")
@@ -100,7 +99,8 @@ if uploaded_file:
     plt.ylabel('Number of Properties')
     plt.title('Rent Distribution')
     plt.legend()
-    st.pyplot()
+    st.pyplot(plt.gcf())  # Use plt.gcf() to get current figure
+    plt.clf()  # Clear the figure after plotting
 
     st.subheader("Average Rent by Furnishing Type")
     plt.figure(figsize=(10, 6))
@@ -109,7 +109,8 @@ if uploaded_file:
     plt.ylabel('Average Rent (₹)')
     plt.xlabel('Furnishing Type')
     plt.title("Average Rent by Furnishing Type")
-    st.pyplot()
+    st.pyplot(plt.gcf())
+    plt.clf()
 
     st.subheader("Average Rent by City Tier")
     plt.figure(figsize=(10, 6))
@@ -118,7 +119,8 @@ if uploaded_file:
     plt.ylabel('Average Rent (₹)')
     plt.xlabel('City Tier')
     plt.title("Average Rent by City Tier")
-    st.pyplot()
+    st.pyplot(plt.gcf())
+    plt.clf()
 
     st.subheader("Correlation Heatmap")
     plt.figure(figsize=(10, 8))
@@ -126,7 +128,8 @@ if uploaded_file:
     corr_matrix = df[corr_cols].corr()
     sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', fmt=".2f", linewidths=0.5)
     plt.title('Correlation Heatmap: Rent, BHK, Size, Age')
-    st.pyplot()
+    st.pyplot(plt.gcf())
+    plt.clf()
 
     # --- 7. Download cleaned dataset ---
     st.header("💾 Download Cleaned Dataset")
