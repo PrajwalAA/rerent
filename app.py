@@ -122,6 +122,26 @@ if uploaded_file:
         st.warning("'city' column not found. Skipping city tier mapping.")
         df['city_tier'] = 'Other'
 
+    # --- NEW: Date Feature Engineering ---
+    if 'availability_date' in df.columns:
+        try:
+            # Convert to datetime
+            df['availability_date'] = pd.to_datetime(df['availability_date'], errors='coerce')
+            
+            # Create new features
+            df['year'] = df['availability_date'].dt.year
+            df['month'] = df['availability_date'].dt.month
+            df['day_of_week'] = df['availability_date'].dt.day_name()
+            
+            # Drop the original date column
+            df = df.drop('availability_date', axis=1)
+            
+            st.success("Date features created successfully!")
+        except Exception as e:
+            st.error(f"Error processing date features: {e}")
+    else:
+        st.warning("'availability_date' column not found. Skipping date feature extraction.")
+
     st.write("Feature Engineering Done!", df.head())
 
     # --- 5. Encoding ---
@@ -210,6 +230,37 @@ if uploaded_file:
             plt.clf()
         except Exception as e:
             st.error(f"Error creating city tier rent plot: {e}")
+
+    # NEW: Visualizations for Date Features
+    if 'month' in df.columns:
+        try:
+            st.subheader("Property Availability by Month")
+            plt.figure(figsize=(10, 6))
+            month_counts = df['month'].value_counts().sort_index()
+            sns.barplot(x=month_counts.index, y=month_counts.values, palette='viridis')
+            plt.xlabel('Month')
+            plt.ylabel('Number of Properties')
+            plt.title('Property Availability by Month')
+            st.pyplot(plt.gcf())
+            plt.clf()
+        except Exception as e:
+            st.error(f"Error creating month availability plot: {e}")
+
+    if 'day_of_week' in df.columns:
+        try:
+            st.subheader("Property Availability by Day of Week")
+            plt.figure(figsize=(10, 6))
+            day_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+            day_counts = df['day_of_week'].value_counts().reindex(day_order).dropna()
+            sns.barplot(x=day_counts.index, y=day_counts.values, palette='magma')
+            plt.xlabel('Day of Week')
+            plt.ylabel('Number of Properties')
+            plt.title('Property Availability by Day of Week')
+            plt.xticks(rotation=45)
+            st.pyplot(plt.gcf())
+            plt.clf()
+        except Exception as e:
+            st.error(f"Error creating day of week availability plot: {e}")
 
     # Correlation Heatmap - with error handling
     corr_cols = ['rent_month', 'bhk', 'size_sqft', 'property_age_yrs']
